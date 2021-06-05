@@ -1,0 +1,95 @@
+%! Author = dryack
+%! Date = 8/2/2020
+
+%!TEX TS-program = xelatex
+
+
+% Preamble
+\documentclass[10pt]{article}   % Default font size 10pt
+\def \whitespaciness { 0 } % pt. bigger numbers = emptier page. 0 is ok.
+\def \typeoffill {\dotfill} % hfill makes blank, dotfill makes dotted lines.
+
+
+% Packages
+\usepackage{resume}
+
+\def\myname{J. Smith}
+\def\myemail{jsmith@nowhere.com}
+\def\mygit{example.com/jsmith}
+\def\mylinkedin{blinkedin.com/in/jsmith}
+\def\mylocation{Ross Ice Shelf \& Remote}
+
+% Document
+\begin{document}
+    \makeintro
+
+    \section{Skills}
+    \skillz{-5.5cm}{Database}
+    {dBase III/IV, Hypercard, MicroPro DataStar, R:Base}
+
+    \skillz{-5.5cm}{Systems Administration}
+    {DEC VMS, Deskman/2, EZ-Tape \& EZ-Drive, LapLink, OS/400, QNX, Ultrix, Videotex Plus} %\mbox can be used to prevent hyphenation of a word
+
+    \skillz{-5.5cm}{Development}
+    {ALGOL-68, AWK, C, \CPP, COBOL, sh \& ksh, UCSD Pascal, \TeX, REXX}
+
+    \skillz{-5.5cm}{Collaboration}
+    {BBSes, BlueWave, English, FidoNet, Thieves Cant}
+
+    \section{Employment}
+    \begin{description}
+        \squish
+        \item \vspace{-1cm}
+        \experience{Foonly Computers}{Principle Hydrodynamic Engineer -- Databases}{1984}{Current}
+    \end{description}
+
+    \begin{hangingparlist}{2em}{3.5pt}{4.5pt}
+        \item Engineer in charge of development of Foonly BasinBase parallel datastore, taking the product from initial specifications through our first release, and all subsequent releases.  With over 15,000 installations sold worldwide, my team has propelled Foonly to the
+        top of water-based computing and data-processing.
+
+        \item Designed highly parallel approach to overflow during maintenance periods, by turning one mop into 5 mops.
+    \end{hangingparlist}
+
+    \begin{description}
+        \experience{Foonly Computers}
+        {Chief Plumber}
+        {1982}{1984}
+    \end{description}
+
+    \begin{hangingparlist}{2em}{3.5pt}{4.5pt}
+        \item Established a new taping protocol that allowed my team to work nearly 100 miles of pipe, while using 20\% fewer feet of tape than the next best performing team, saving the company in excess of \$200 during my tenure.
+
+        \item Contributing member of the committee which moved Foonly off the lead pipe standard, and into the future.
+    \end{hangingparlist}
+
+    \begin{description}
+        \experience{Control Data Corporation}
+        {Staff Janitor}
+        {1979}{1982}
+    \end{description}
+
+    \begin{hangingparlist}{2em}{3.5pt}{4.5pt}
+        \item I was the \textit{only} member of the janitorial crew permitted to clean around the prototype of the STAR-100.
+
+        \item Snuck into the PLATO lab on the overnight shifts, in order to play \textit{dnd}.
+    \end{hangingparlist}
+
+    \section{Tech Projects \& Contributions}
+    \vspace{-6.5mm}
+
+    \project{Open Micro-Turbine}
+    {\href{https://random-gibberish.com/nope}}
+    {Contributor to cross industry efforts to establish an open micro-turbine specification for use in water-based computing.}
+
+    \project{Before the Flood}{}
+    {Personal recollections of prototype failures during the transition from the Foonly Mk 2 to the the Mk 3 and its family.}
+
+    \section{Certifications}
+    \vspace{-6.5mm}
+    \begin{description}
+        \item UPC Journey Level Plumber since 1984
+
+        \item Foonly NeptuneIX Certified Engineer by \href{http://example.com/FNCE/}{Foonly Insitute of Excellence} (1988--current)
+    \end{description}
+
+\end{document}

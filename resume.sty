@@ -1,0 +1,292 @@
+%! Package = resume
+%! Author = Dave Ryack
+%! Date = 8/1/2020
+
+
+% Contents Copyright (C) 2020-2021, Dave Ryack
+
+% From code originally developed by E. Dunham
+% https://github.com/edunham/resume/blob/master/preamble.sty
+
+% LaTeX code for rendering the resume is distributed under the MIT license.
+% See LICENSE.txt. It means you can use the code for whatever you want,
+% including your own resume, but I'm not liable if it catches your computer on
+% fire.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{resume}[2020/08/01 dryack's Package]
+
+% Packages
+\RequirePackage{tikz}
+\usetikzlibrary{shapes.geometric, angles, quotes, positioning, calc}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\usepackage{xparse}
+\usepackage{fontspec}
+\usepackage[normalem]{ulem}                 % for the underlines
+\usepackage[compact]{titlesec}              % Shrink default spacings
+\usepackage{tabto}                          % For aligning skills section
+\usepackage{multicol}                       % for multicols command
+\usepackage{ragged2e}                       % for /justify
+\usepackage{xcolor}
+\usepackage[pdfpagelabels=false]{hyperref}  % for /href
+\usepackage{etoolbox}
+
+% Font Commands
+\defaultfontfeatures{Mapping=tex-text}
+\newcommand{\largega}[1]{{\fontspec[Ligatures={Common}]{Garamond Premier Pro}\fontsize{18pt}{14pt}\selectfont #1}}
+\newcommand{\gaopt}[2]{{\fontspec[Ligatures={Common}]{Garamond Premier Pro}\fontsize{#1}{14pt}\selectfont #2}}
+\newcommand{\ga}[1]{{\fontspec[Ligatures={Common}]{Garamond Premier Pro}\fontsize{18pt}{14pt}\selectfont #1}}
+\newcommand{\erato}[1]{{\fontspec[Ligatures={Common}]{Erato}\fontsize{10pt}{12pt}\selectfont #1}}
+\newcommand{\eratobold}[1]{{\fontspec[Ligatures={Common}]{Erato}\fontsize{12pt}{14pt}\selectfont \textbf{#1}}}
+\newcommand{\sourcecodepro}[1]{{\fontspec[Ligatures={Common}]{Source Code Pro}\fontsize{11}{12}\selectfont #1}}
+
+% Colors
+\definecolor{white}{RGB}{255,255,255}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{gray}{HTML}{4D4D4D}
+\definecolor{sidecolor}{HTML}{E7E7E7}
+\definecolor{lightgray}{HTML}{999999}
+\definecolor{green}{HTML}{C2E15F}
+\definecolor{orange}{HTML}{FDA333}
+\definecolor{purple}{HTML}{D3A4F9}
+\definecolor{red}{HTML}{FB0B00}
+\definecolor{blue}{HTML}{6CE0F1}
+\definecolor{mainblue}{HTML}{0E5484}
+\definecolor{cerulean}{HTML}{007BA7}
+%\definecolor{maingray}{HTML}{B9B9B9}
+\definecolor{maingray}{gray}{0.35}
+%\definecolor{maindarkgray}{HTML}{808080}
+\definecolor{maindarkgray}{gray}{0.2}
+
+% page setup
+\textwidth= 158mm % originally 7in
+\textheight=10.5in
+\topmargin -31.5mm % Reclaim the default whitespace from top of page (originally -1.25in)
+% any increase of \textwidth, should be compensated for by a decrease of \oddsidemargin - even unto using negative nums
+\oddsidemargin 5mm % Reclaim whitespace on left, make it look centered (originally -.25in)
+\pagenumbering{gobble} % Don't number pages
+%\setlength{\parindent}{0pt} % Don't indent paragraphs
+
+% squish: reduce whitespace between elements
+\newcommand{\squish}{
+    \setlength{\parskip}{\whitespaciness pt}
+}
+
+% in support of \experience
+% params: start-date, end-date
+\newcommand{\enwhen}[2]{ % naming this 'date' would conflict with builtins
+    \typeoffill { #1 -- #2}
+}
+
+
+% job experience entry
+% first param: company
+% second param: optional title (otherwise start-date)
+% third param: start-date (otherwise end-date)
+% fourth param: end-date
+\newcommand{\experience}[4]{ % place, optional title, start-date, end-date
+    \ifx&#2&
+    \item[\textbf{\erato{#1}}]
+    \else
+    \item[\textbf{\erato{#1}}, \gaopt{11.5pt}{\textit{#2}}]
+    \fi
+    \enwhen{#3}{#4} %endash version
+    \vspace{1mm}
+}
+
+
+\newcommand{\event}[4]{
+    \bf{#1} \tabto{2in} \texttt{#2} \tabto{3in} \normalfont
+    \ifx&#3& \else
+    \emph{ {#3},}
+    \fi
+    ``{#4}''
+}
+
+% Write C++ all fancy-like
+% http://www.parashift.com/c++-faq-lite/latex-macros.html
+\newcommand{\CPP}{
+    C\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}
+}
+
+% alternative to \skill, for extended lists of skills
+% columnsep can be used here to unbalance the columns, with a negative number
+% increasing the size of the right column versus the left.  '0cm' or equivalent
+% will keep them balanced
+%
+% params: columnsep, heading, individual skills
+\newcommand{\skillz}[3]{
+    \vspace{-0.5cm}
+    \squish
+    \setlength{\columnsep}{#1}
+    \begin{multicols}{2}
+        \squish
+        \RaggedRight % force to the hard left of the column
+        \small
+        \textbf{\erato{#2}}
+        \columnbreak
+        \squish
+        \justify
+        \small
+        #3
+    \end{multicols}
+    \vspace{-1.5mm} % yes, really necessary to keep this self-contained
+}
+
+% based on https://tex.stackexchange.com/a/148803
+% intended to increase readability of longer entries under 'experience'
+% params: indent/margin, item separation, top separation
+\newenvironment{hangingparlist}[3]
+{\begin{list}
+% from:  https://tex.stackexchange.com/questions/119319/how-to-correctly-shrink-the-bullets-of-itemize
+{$\vcenter{\hbox{\tiny$\bullet$}}$}
+{\setlength{\itemindent}{-#1}%%
+\setlength{\leftmargin}{#1}%%
+\setlength{\itemsep}{#2}%%
+\setlength{\parsep}{#2}%%
+\setlength{\topsep}{#3}%%
+}
+     \setlength{\parindent}{-#1}%%
+}
+{\end{list}
+}
+
+% Projects/Contributions
+% params: name, optional website, description
+\newcommand{\project}[3]{
+\begin{description}
+\ifx&#2&
+\item[#1] --- #3
+\else
+\item[#1]\emph{#2} --- #3
+\fi
+\end{description}
+\vspace{-.6cm} %control the spacing between each project
+}
+
+% creates a color-filled node using tikz and labels it
+% params: label/text, fill color (meant to be derived from \sectioncolor
+% TODO: support alternate shapes
+% TODO: support rounded corners (or not) as a param
+% TODO: support angles as a param
+% TODO: support text colors as a param
+% TODO: vertically centering text is a pain in the arse - support text depth and tech height as params - to ease experimentation
+\newcommand*\round[2]{%
+\tikz
+%\node[draw,rectangle, rounded corners=3.5mm, inner sep=2.9pt, minimum size=4.4mm, align=center,
+%text depth=2.5mm, text height=5mm,fill=#2,#2,text=white](char){\bf{\erato{#1}}} ;}
+\node (a) [trapezium, trapezium left angle=60, trapezium right angle=120, rounded corners=2.5mm, inner sep=2.5pt, minimum size=4.4mm, align=left,
+text depth=1.7mm, text height=4mm,fill=#2,#2,text=white](char) {\eratobold{#1}};
+
+}
+
+% in support of \section and \round
+% sets up a counter alternates the color used for the for the Tikz node built by \round above
+% TODO: support color AND monochrome options
+% TODO: support colors as params?
+\newcounter{colorCounter}
+\newcommand\sectioncolor[1]{%
+{%
+\round
+{#1}
+{
+\ifcase\value{colorCounter}%
+maingray\or%
+maindarkgray\or%
+maingray\or%
+maindarkgray\else%
+maingray\fi%
+%mainblue\or%
+%cerulean\or%
+%mainblue\or%
+%cerulean\else%
+%mainblue\fi%
+}%
+}%
+\stepcounter{colorCounter}%
+}
+
+% section headings of alternating color:
+% parameter: heading/section text (ie. Skill, Employment, etc)
+% TODO: support left or center alignment (replace \hfill with conditionals)
+% TODO: support params for vspace before the section, and after the accent
+% TODO: optional toggling of accent line?
+\renewcommand{\section}[1]{
+\par %\vspace{\parskip}
+\vspace{1.5mm}
+{%
+\LARGE
+\hfill \ga{\sectioncolor{#1}}%
+}
+\hfill \accentline{-5.5mm}{-0.08}{16}{15}
+\par\vspace{.95mm}
+\vspace{-5mm} % added for specific fix
+
+}
+
+% in support \makeintro
+\newcommand\@name{\relax}
+\newcommand{\name}[1]{\gdef\@name{#1}}
+\newcommand\@contact{\relax}
+\newcommand{\contact}[1]{\gdef\@contact{#1}}
+
+% make intro:
+% looks for vars \myname, \myemail, \mygit, \mylinkedin, and \mylocation and assembles them into block containing
+% your name and contact information
+% TODO: optional phone number
+% TODO: genericize or replace vars with params
+\newcommand\makeintro[1]{% No internal links to title page allowed
+\begin{center}
+%\vspace*{\fill}
+\gaopt{30pt}{\textbf{\myname}} \par
+%\vfill
+%\mycontact
+\ifstrequal{#1}{cover}{%
+    \covercontactblock{\myemail}{\mygit}{\mylinkedin}{\mylocation}
+}{%
+    \contactblock{\myemail}{\mygit}{\mylinkedin}{\mylocation}
+}
+\end{center}
+\global\let\makeintro\relax
+\global\let\@name\@empty
+\global\let\@contact\@empty
+\global\let\name\relax
+\global\let\contact\relax
+\vspace{-1.75mm}
+}
+
+% contact block:
+% contact1 * contact2 * contact3
+% location * resume date
+% params: contact1 (email for example), contact2, contact3, location(s)
+% TODO: optional phone number
+\newcommand\contactblock[4]{%
+\begin{tabular}{c c c c c}
+\erato{{#1}} & {$\bullet$} & \erato{{#2}} & {$\bullet$} & \erato{{#3}}
+\end{tabular}
+\centerline{ \textit{#4}  $\bullet$ \textit{R\'{e}sum\'{e} current as of \today}}
+}
+
+\newcommand\covercontactblock[4]{%
+\begin{tabular}{c c c c c}
+\erato{{#1}} & {$\bullet$} & \erato{{#2}} & {$\bullet$} & \erato{{#3}}
+\end{tabular}
+\centerline{ \textit{#4}  $\bullet$ \textit{\today}}
+}
+
+% parallel lines for accenting:
+% first param: vspace between accent line and preceding elements (i've been using -4mm)
+% second param: separation of lines (a very little goes a long way here, I prefer -0.1)
+% third param: top line length
+% fourth param: bottom line length
+\newcommand\accentline[4]{%
+\vspace{#1}
+\begin{tikzpicture}
+%\draw [rounded corners,darkgray,thick](0,0) -- (#3,0);
+\draw [rounded corners,mainblue,thick](0,0) -- (#3,0);
+\tikzset{shift={(0,#2)}}
+%\draw [rounded corners,gray,thick](0,0) -- (#4,0);
+\draw [rounded corners,cerulean,thick](0,0) -- (#4,0);
+\end{tikzpicture}
+}
